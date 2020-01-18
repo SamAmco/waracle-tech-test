@@ -27,7 +27,7 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.main_fragment, container, false)
-        listAdapter = CakesAdapter()
+        listAdapter = CakesAdapter(context!!)
 
         initViewModel()
         initRecyclerView()
@@ -55,6 +55,9 @@ class MainFragment : Fragment() {
             listAdapter.submitList(it)
         })
         viewModel.errorState.observe(viewLifecycleOwner, Observer {
+            //TODO this is a pretty ugly way of communicating an error to the user.
+            // Should probably use an AlertDialog with a pre-constructed message
+            // and keep the gory details to your self.
             if (it != null) Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         })
     }
