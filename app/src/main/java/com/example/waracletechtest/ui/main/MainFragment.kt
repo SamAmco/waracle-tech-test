@@ -1,22 +1,22 @@
 package com.example.waracletechtest.ui.main
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.waracletechtest.R
 import com.example.waracletechtest.data.Cake
 import com.example.waracletechtest.databinding.MainFragmentBinding
 import com.example.waracletechtest.service.cakeservice.CakesService
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import java.io.IOException
+import com.example.waracletechtest.R
 
 class MainFragment : Fragment() {
     companion object { fun newInstance() = MainFragment() }
@@ -55,10 +55,12 @@ class MainFragment : Fragment() {
             listAdapter.submitList(it)
         })
         viewModel.errorState.observe(viewLifecycleOwner, Observer {
-            //TODO this is a pretty ugly way of communicating an error to the user.
-            // Should probably use an AlertDialog with a pre-constructed message
-            // and keep the gory details to your self.
-            if (it != null) Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            if (it != null) {
+                val snackbar: Snackbar = Snackbar
+                    .make(binding.root, getString(R.string.no_cakes_error), Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.retry)) { viewModel.refresh() }
+                snackbar.show()
+            }
         })
     }
 }

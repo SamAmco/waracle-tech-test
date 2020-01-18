@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Waracle Tech Test</string>
+    <string name="no_cakes_error">Could not retrieve cake list</string>
+    <string name="retry">RETRY</string>
 </resources>
