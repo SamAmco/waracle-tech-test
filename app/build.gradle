@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+
+//TODO not yet set up any real release configuration
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
