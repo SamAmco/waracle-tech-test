@@ -6,18 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.waracletechtest.R
 import com.example.waracletechtest.data.Cake
 import com.example.waracletechtest.databinding.MainFragmentBinding
 import com.example.waracletechtest.service.cakeservice.CakesService
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import java.io.IOException
 
 class MainFragment : Fragment() {
@@ -46,6 +44,10 @@ class MainFragment : Fragment() {
             adapter = listAdapter
             addItemDecoration(divider)
         }
+        binding.swipeToRefresh.setOnRefreshListener { viewModel.refresh() }
+        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            binding.swipeToRefresh.isRefreshing = it
+        })
     }
 
     private fun initViewModel() {
@@ -59,11 +61,41 @@ class MainFragment : Fragment() {
 }
 
 class MainViewModel : ViewModel() {
+    private var updateJob = Job()
+    private val ioScope = CoroutineScope(Dispatchers.IO + updateJob)
+
+    val isLoading : LiveData<Boolean> get() { return _isLoading }
+    private val _isLoading = MutableLiveData<Boolean>(false)
+
     val errorState : LiveData<String?> get() { return _errorState }
     private val _errorState = MutableLiveData<String?>(null)
 
-    val cakes : LiveData<List<Cake>> = liveData(Dispatchers.IO) {
-        try { emit(CakesService().getCakesList()) }
-        catch (e: IOException) { _errorState.value = e.message }
+    val cakes : LiveData<List<Cake>> get() { return _cakes }
+    private val _cakes = MutableLiveData<List<Cake>>(listOf())
+
+    private val cakesService = CakesService()
+
+    init { refresh() }
+
+    fun refresh() = ioScope.launch {
+        withContext(Dispatchers.Main) { _isLoading.value = true }
+        val cakesList = getCakes()
+        withContext(Dispatchers.Main) {
+            _cakes.value = cakesList
+            _isLoading.value = false
+        }
+    }
+
+    private suspend fun getCakes(): List<Cake> {
+        try { return cakesService.getCakesList() }
+        catch (e: IOException) {
+            withContext(Dispatchers.Main) { _errorState.value = e.message }
+        }
+        return listOf()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        ioScope.cancel()
     }
 }
