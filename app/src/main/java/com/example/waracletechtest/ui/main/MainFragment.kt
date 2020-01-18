@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import java.io.IOException
 import com.example.waracletechtest.R
+import com.example.waracletechtest.service.cakeservice.createCakesService
 
 class MainFragment : Fragment() {
     companion object { fun newInstance() = MainFragment() }
@@ -78,7 +79,7 @@ class MainViewModel : ViewModel() {
     val cakes : LiveData<List<Cake>> get() { return _cakes }
     private val _cakes = MutableLiveData<List<Cake>>(listOf())
 
-    private val cakesService = CakesService()
+    private val cakesService = createCakesService()
 
     init { refresh() }
 
