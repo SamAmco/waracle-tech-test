@@ -6,12 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.waracletechtest.R
 import com.example.waracletechtest.data.Cake
 import com.example.waracletechtest.databinding.MainFragmentBinding
@@ -36,16 +39,17 @@ class MainFragment : Fragment() {
 
     private fun initRecyclerView() {
         val viewManager = LinearLayoutManager(context)
+        val divider = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         binding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = listAdapter
+            addItemDecoration(divider)
         }
     }
 
     private fun initViewModel() {
         viewModel.cakes.observe(this, Observer {
-            //TODO might need more nuanced behaviour here
             listAdapter.submitList(it)
         })
     }

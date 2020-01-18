@@ -15,7 +15,6 @@
                 android:layout_height="80dp"
                 android:layout_margin="10dp"
                 android:layout_gravity="center"
-                tools:src="@drawable/divider_gradient"
                 />
             <!--TODO deal better with names that overflow the viewable area, maybe a scrolling animation?-->
             <TextView
@@ -26,12 +25,5 @@
                 android:textSize="25sp"
                 tools:text="Cake name"/>
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:scaleType="fitXY"
-            android:layout_gravity="bottom"
-            android:src="@drawable/divider_gradient"/>
     </FrameLayout>
 </layout>
